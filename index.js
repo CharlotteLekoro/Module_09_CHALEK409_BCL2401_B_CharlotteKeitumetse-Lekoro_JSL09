@@ -8,7 +8,7 @@ fetch("https://apis.scrimba.com/unsplash/photos/random?orientation=landscape&que
         // Use a default background image/author
         document.body.style.backgroundImage = `url(https://images.unsplash.com/photo-1560008511-11c63416e52d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMTEwMjl8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MjI4NDIxMTc&ixlib=rb-1.2.1&q=80&w=1080
 )`
-		document.getElementById("author").textContent = `By: Charlotte Keitumetse Lekoro`
+		document.getElementById("author").textContent = `By: `
     })
 
 fetch("https://api.coingecko.com/api/v3/coins/dogecoin")
@@ -38,7 +38,7 @@ function getCurrentTime() {
 
 setInterval(getCurrentTime, 1000)
 
-navigator.geolocation.getCurrentPosition(position => {
+/*navigator.geolocation.getCurrentPosition(position => {
     fetch(`https://apis.scrimba.com/openweathermap/data/2.5/weather?lat=${position.coords.latitude}&lon=${position.coords.longitude}&units=imperial`)
         .then(res => {
             if (!res.ok) {
@@ -55,4 +55,27 @@ navigator.geolocation.getCurrentPosition(position => {
             `
         })
         .catch(err => console.error(err))
+});*/
+
+navigator.geolocation.getCurrentPosition(position => {
+    fetch(`https://apis.scrimba.com/openweathermap/data/2.5/weather?lat=${position.coords.latitude}&lon=${position.coords.longitude}&units=imperial`)
+        .then(res => {
+            if (!res.ok) {
+                throw Error("Weather data not available")
+            }
+            return res.json()
+        })
+        .then(data => {
+            // Convert temperature from Fahrenheit to Celsius
+            const celsiusTemp = (data.main.temp - 32) * (5 / 9);
+            
+            // Construct the URL for the weather icon
+            const iconUrl = `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
+            document.getElementById("weather").innerHTML = `
+                <img src=${iconUrl} />
+                <p class="weather-temp">${Math.round(celsiusTemp)}°C</p>
+                <p class="weather-city">${data.name}</p>
+            `;
+        });
 });
+
